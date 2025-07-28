@@ -12,7 +12,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.porject.conglaturator.model.BirthdayEntity;
+import com.porject.conglaturator.dto.BirthdayRequestDTO;
+import com.porject.conglaturator.dto.BirthdayResponseDTO;
 import com.porject.conglaturator.service.BirthdayService;
 
 @RestController
@@ -25,28 +26,23 @@ public class BirthdayController {
     }
 
     @GetMapping
-    public List<BirthdayEntity> getAllBirthdays() {
+    public List<BirthdayResponseDTO> getAllBirthdays() {
         return service.getAllBirthdays();
     }
 
     @GetMapping("/upcoming")
-    public List<BirthdayEntity> getUpcomingBirthdays() {
+    public List<BirthdayResponseDTO> getUpcomingBirthdays() {
         return service.getUpcomingBirthdays();
     }
 
-    @GetMapping("/current")
-    public List<BirthdayEntity> getCurrentBirthdays() {
-        return service.getCurrentBirthdays();
-    }
-
     @PostMapping
-    public BirthdayEntity addBirthday(@RequestBody BirthdayEntity birthday) {
-        return service.addBirthday(birthday);
+    public BirthdayResponseDTO addBirthday(@RequestBody BirthdayRequestDTO requestDTO) {
+        return service.addBirthday(requestDTO);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<BirthdayEntity> updateBirthday(@PathVariable Long id, @RequestBody BirthdayEntity birthday) {
-        return ResponseEntity.ok(service.updateBirthday(id, birthday));
+    public ResponseEntity<BirthdayResponseDTO> updateBirthday(@PathVariable Long id, @RequestBody BirthdayRequestDTO requestDTO) {
+        return ResponseEntity.ok(service.updateBirthday(id, requestDTO));
     }
 
     @DeleteMapping("/{id}")

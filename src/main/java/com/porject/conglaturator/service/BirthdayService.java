@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.porject.conglaturator.dto.BirthdayRequestDTO;
+import com.porject.conglaturator.dto.BirthdayResponseDTO;
 import com.porject.conglaturator.model.BirthdayEntity;
 import com.porject.conglaturator.repository.BirthdayRepository;
 
@@ -15,31 +17,42 @@ public class BirthdayService {
         this.repository = repository;
     }
 
-    public List<BirthdayEntity> getAllBirthdays() {
-        return repository.findAll();
+    public List<BirthdayResponseDTO> getAllBirthdays() {
+        return repository.findAll().stream()
+            .map(this::toResponseDTO)
+            .toList();
     }
 
-    public List<BirthdayEntity> getUpcomingBirthdays() {
-        return repository.findUpcomingBirthdays();
+    public List<BirthdayResponseDTO> getUpcomingBirthdays() {
+        return repository.findUpcomingBirthdays().stream()
+            .map(this::toResponseDTO)
+            .toList();
     }
 
-    public List<BirthdayEntity> getCurrentBirthdays() {
-        return repository.findCurrentBirthdays();
+    public BirthdayResponseDTO addBirthday(BirthdayRequestDTO requestDTO) {
+        BirthdayEntity birthday = new BirthdayEntity();
+        birthday.setName(requestDTO.getName());
+        birthday.setDate(requestDTO.getDate());
+        return toResponseDTO(repository.save(birthday));
     }
 
-    public BirthdayEntity addBirthday(BirthdayEntity birthday) {
-        return repository.save(birthday);
-    }
-
-    public BirthdayEntity updateBirthday(Long id, BirthdayEntity updatedBirthday) {
+    public BirthdayResponseDTO updateBirthday(Long id, BirthdayRequestDTO requestDTO) {
         BirthdayEntity existing = repository.findById(id)
             .orElseThrow(() -> new IllegalArgumentException("Birthday not found"));
-        existing.setName(updatedBirthday.getName());
-        existing.setDate(updatedBirthday.getDate());
-        return repository.save(existing);
+        existing.setName(requestDTO.getName());
+        existing.setDate(requestDTO.getDate());
+        return toResponseDTO(repository.save(existing));
     }
 
     public void deleteBirthday(Long id) {
         repository.deleteById(id);
+    }
+
+    private BirthdayResponseDTO toResponseDTO(BirthdayEntity birthday) {
+        BirthdayResponseDTO responseDTO = new BirthdayResponseDTO();
+        responseDTO.setId(birthday.getId());
+        responseDTO.setName(birthday.getName());
+        responseDTO.setDate(birthday.getDate());
+        return responseDTO;
     }
 }
